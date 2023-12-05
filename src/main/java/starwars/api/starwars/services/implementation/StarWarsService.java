@@ -10,7 +10,6 @@ import starwars.api.starwars.dto.FilmsDTO;
 import starwars.api.starwars.exceptions.InvalidEpisodeIdException;
 import starwars.api.starwars.exceptions.StarWarsNotFoundException;
 import starwars.api.starwars.jpa.entities.Film;
-import starwars.api.starwars.jpa.repositories.FilmRepository;
 import starwars.api.starwars.services.StarWarsApi;
 
 import java.text.ParseException;
@@ -23,7 +22,7 @@ public class StarWarsService implements StarWarsApi {
     private final String baseUrl;
     private final int timeout;
 
-    public StarWarsService(DataBaseService dataBaseService, RestTemplate restTemplate, @Value("https://swapi.dev/api/films/") String baseUrl, @Value("30000") int timeout, FilmRepository filmRepository) {
+    public StarWarsService(DataBaseService dataBaseService, RestTemplate restTemplate, @Value("https://swapi.dev/api/films/") String baseUrl, @Value("30000") int timeout) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.timeout = timeout;

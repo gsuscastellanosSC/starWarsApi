@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static starwars.api.starwars.utils.utils.formaterDate;
+
 @Service
 @RequiredArgsConstructor
 public class DataBaseService implements Database {
@@ -43,12 +45,6 @@ public class DataBaseService implements Database {
             }
         });
     }
-
-    public static Date formaterDate(String string) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM");
-        return formatter.parse(string);
-    }
-
     @Override
     public void deleteById(Long id) {
         filmRepository.deleteById(id);

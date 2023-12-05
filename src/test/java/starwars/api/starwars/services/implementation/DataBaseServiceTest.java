@@ -18,6 +18,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static starwars.api.starwars.utils.utils.formaterDate;
 
 @ExtendWith(MockitoExtension.class)
 class DataBaseServiceTest {
@@ -42,7 +43,7 @@ class DataBaseServiceTest {
         filmDTO.setTitle("Title");
         filmDTO.setRelease_date("2023-12-31");
 
-        Date parsedDate = DataBaseService.formaterDate("2023-12-31");
+        Date parsedDate = formaterDate("2023-12-31");
         Film expectedFilm = new Film();
         expectedFilm.setEpisodeId("1");
         expectedFilm.setTitle("Title");
