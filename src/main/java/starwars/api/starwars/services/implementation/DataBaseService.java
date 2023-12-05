@@ -19,9 +19,10 @@ import java.util.List;
 public class DataBaseService implements Database {
 
     private final FilmRepository filmRepository;
+
     @Override
     public Film save(FilmDTO filmDTO) throws ParseException {
-        Date date =  formaterDate(filmDTO.getRelease_date());
+        Date date = formaterDate(filmDTO.getRelease_date());
         Film film = new Film();
         film.setEpisodeId(String.valueOf(filmDTO.getEpisode_id()));
         film.setTitle(filmDTO.getTitle());
@@ -32,21 +33,22 @@ public class DataBaseService implements Database {
     @Override
     public void updateTitleAndReleaseDateById(List<FilmsDTO> filmsDTO) {
 
-        filmsDTO.forEach(filmDTO -> {{
-            try {
-                filmRepository.updateTitleAndReleaseDateById(filmDTO.getEpisode_id(), filmDTO.getTitle(),formaterDate(filmDTO.getRelease_date()));
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+        filmsDTO.forEach(filmDTO -> {
+            {
+                try {
+                    filmRepository.updateTitleAndReleaseDateById(filmDTO.getEpisode_id(), filmDTO.getTitle(), formaterDate(filmDTO.getRelease_date()));
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
         });
-
     }
 
     public static Date formaterDate(String string) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM");
         return formatter.parse(string);
     }
+
     @Override
     public void deleteById(Long id) {
         filmRepository.deleteById(id);
