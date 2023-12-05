@@ -1,8 +1,0 @@
-server:
-  port: 8090
-  error:
-    include-message: always
-  servlet:
-    context-path: /
-swapi:
-  baseurl: "https://swapi.dev/api/films/"
