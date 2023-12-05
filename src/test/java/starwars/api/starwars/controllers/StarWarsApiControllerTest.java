@@ -8,9 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import starwars.api.starwars.dto.FilmDTO;
-import starwars.api.starwars.dto.FilmResponseDTO;
-import starwars.api.starwars.jpa.entities.Film;
+import starwars.api.starwars.dto.FilmsDTO;
 import starwars.api.starwars.services.implementation.StarWarsService;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,18 +24,18 @@ class StarWarsApiControllerTest {
     @MockBean
     StarWarsService starWarsService;
 
-    private FilmResponseDTO filmResponseDTO;
+    private FilmsDTO filmsDTO;
     private String id;
 
     @BeforeEach
     void setUp(){
-        filmResponseDTO = FilmResponseDTO.builder().build();
+        filmsDTO = FilmsDTO.builder().build();
         id = "1";
     }
 
     @Test
     void testSaveEpisodeInfo() {
-        when(starWarsService.getFilms(id)).thenReturn(filmResponseDTO);
+        when(starWarsService.getFilms(id)).thenReturn(filmsDTO);
         assertDoesNotThrow(() ->
         {
             mockMvc.perform(MockMvcRequestBuilders.post("/films/{id}", 1)

@@ -1,13 +1,12 @@
 package starwars.api.starwars.services.implementation;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import starwars.api.starwars.dto.FilmDTO;
-import starwars.api.starwars.dto.FilmResponseDTO;
+import starwars.api.starwars.dto.FilmsDTO;
 import starwars.api.starwars.exceptions.InvalidEpisodeIdException;
 import starwars.api.starwars.exceptions.StarWarsNotFoundException;
 import starwars.api.starwars.jpa.entities.Film;
@@ -15,18 +14,16 @@ import starwars.api.starwars.jpa.repositories.FilmRepository;
 import starwars.api.starwars.services.StarWarsApi;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Service
 public class StarWarsService implements StarWarsApi {
 
-    private final FilmRepository filmRepository;
+    private final DataBaseService dataBaseService;
     private final RestTemplate restTemplate;
     private final String baseUrl;
     private final int timeout;
 
-    public StarWarsService(FilmRepository filmRepositry, RestTemplate restTemplate, @Value("${swapi.baseurl}") String baseUrl, @Value("${swapi.timeout}") int timeout, FilmRepository filmRepository) {
+    public StarWarsService(DataBaseService dataBaseService, RestTemplate restTemplate, @Value("https://swapi.dev/api/films/") String baseUrl, @Value("30000") int timeout, FilmRepository filmRepository) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
         this.timeout = timeout;
@@ -34,29 +31,22 @@ public class StarWarsService implements StarWarsApi {
         ((SimpleClientHttpRequestFactory) factory).setConnectTimeout(timeout);
         ((SimpleClientHttpRequestFactory) factory).setReadTimeout(timeout);
         restTemplate.setRequestFactory(factory);
-        this.filmRepository = filmRepository;
+        this.dataBaseService = dataBaseService;
     }
 
     @Override
-    public FilmResponseDTO getFilms(String episodeId) {
+    public FilmsDTO getFilms(String episodeId) {
         validateEpisodeId(episodeId);
 
         String url = baseUrl.concat(episodeId);
         try {
             FilmDTO filmDTO = restTemplate.getForObject(url, FilmDTO.class);
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM");
-            Date date = formatter.parse(filmDTO.getRelease_date());
-            Film film = new Film();
-            film.setEpisodeId(String.valueOf(filmDTO.getEpisode_id()));
-            film.setTitle(filmDTO.getTitle());
-            film.setReleaseDate(date);
-            Film saveFilm = filmRepository.save(film);
-            FilmResponseDTO filmResponseDTO = FilmResponseDTO.builder()
-                    .episode_id(Long.valueOf(film.getEpisodeId()))
+            Film saveFilm = dataBaseService.save(filmDTO);
+            return FilmsDTO.builder()
+                    .episode_id(Long.valueOf(saveFilm.getEpisodeId()))
                     .title(saveFilm.getTitle())
                     .release_date(filmDTO.getRelease_date())
                     .build();
-            return filmResponseDTO;
         } catch (StarWarsNotFoundException exception) {
             throw new StarWarsNotFoundException("Film not found");
         } catch (ParseException e) {
