@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class FilmDTO {
     private String title;
-    private int episode_id;
+    private Long episode_id;
     private String opening_crawl;
     private String director;
     private String producer;

@@ -6,3 +6,4 @@ server:
     context-path: /
 swapi:
   baseurl: "https://swapi.dev/api/films/"
+  timeout: 30000

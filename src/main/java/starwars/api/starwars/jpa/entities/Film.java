@@ -1,7 +1,9 @@
 package starwars.api.starwars.jpa.entities;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
 
