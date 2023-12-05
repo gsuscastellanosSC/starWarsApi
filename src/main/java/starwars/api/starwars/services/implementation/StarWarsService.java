@@ -61,6 +61,6 @@ public class StarWarsService implements StarWarsApi {
     }
 
     private boolean isValidEpisodeId(String episodeId) {
-        return episodeId.matches("\\d+") && episodeId != null && episodeId.length() <= 2 && Integer.parseInt(episodeId) <= 6;
+        return episodeId != null && episodeId.matches("\\d+") && episodeId.length() <= 2 && Integer.parseInt(episodeId) <= 6;
     }
 }

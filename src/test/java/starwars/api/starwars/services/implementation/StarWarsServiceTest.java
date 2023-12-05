@@ -6,10 +6,13 @@ import org.mockito.Mock;
 
 import org.springframework.web.client.RestTemplate;
 import starwars.api.starwars.dto.FilmDTO;
+import starwars.api.starwars.exceptions.InvalidEpisodeIdException;
+import starwars.api.starwars.exceptions.StarWarsNotFoundException;
 import starwars.api.starwars.jpa.entities.Film;
 
 import java.text.ParseException;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -55,4 +58,67 @@ class StarWarsServiceTest {
         verify(dataBaseService, times(1)).save(any(FilmDTO.class));
     }
 
+    @Test
+    void givenNullEpisodeId_thenThrowException() {
+        String nullEpisodeId = null;
+
+        assertThrows(InvalidEpisodeIdException.class, () -> {
+            starWarsService.validateEpisodeId(nullEpisodeId);
+        });
+    }
+
+    @Test
+    void givenEmptyEpisodeId_thenThrowException() {
+        String emptyEpisodeId = "";
+
+        assertThrows(InvalidEpisodeIdException.class, () -> {
+            starWarsService.validateEpisodeId(emptyEpisodeId);
+        });
+    }
+
+    @Test
+    void givenInvalidFormatEpisodeId_thenThrowException() {
+        String invalidFormatEpisodeId = "abc";
+
+        assertThrows(InvalidEpisodeIdException.class, () -> {
+            starWarsService.validateEpisodeId(invalidFormatEpisodeId);
+        });
+    }
+
+    @Test
+    void givenOutOfRangeEpisodeId_thenThrowException() {
+        String outOfRangeEpisodeId = "10";
+
+        assertThrows(InvalidEpisodeIdException.class, () -> {
+            starWarsService.validateEpisodeId(outOfRangeEpisodeId);
+        });
+    }
+
+    @Test
+    void givenValidEpisodeId_thenNoException() {
+        String validEpisodeId = "3";
+        starWarsService.validateEpisodeId(validEpisodeId);
+    }
+
+    @Test
+    void givenInvalidEpisodeId_thenThrowInvalidEpisodeIdException() {
+        String invalidEpisodeId = "invalidId";
+        when(restTemplate.getForObject("https://swapi.dev/api/films/" + invalidEpisodeId, FilmDTO.class))
+                .thenThrow(StarWarsNotFoundException.class);
+
+        assertThrows(InvalidEpisodeIdException.class, () -> {
+            starWarsService.getFilms(invalidEpisodeId);
+        });
+    }
+
+    @Test
+    void givenNonexistentFilm_thenThrowStarWarsNotFoundException() {
+        String nonexistentEpisodeId = "1";
+        when(restTemplate.getForObject("https://swapi.dev/api/films/" + nonexistentEpisodeId, FilmDTO.class))
+                .thenThrow(StarWarsNotFoundException.class);
+
+        assertThrows(StarWarsNotFoundException.class, () -> {
+            starWarsService.getFilms(nonexistentEpisodeId);
+        });
+    }
 }
